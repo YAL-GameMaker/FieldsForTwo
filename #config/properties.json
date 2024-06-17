@@ -1,0 +1,13 @@
+{
+    "autoArrowFunctions": true,
+    "builderSettings": {
+        "forkArguments": "--fork"
+    },
+    "linterPrefs": {
+        "blockScopedCase": true,
+        "blockScopedVar": true,
+        "requireFields": true,
+        "specTypeInst": true,
+        "specTypeVar": true
+    }
+}

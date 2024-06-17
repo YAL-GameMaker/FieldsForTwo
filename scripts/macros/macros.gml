@@ -1,0 +1,1 @@
+#macro delta_time_s (delta_time / 1000000)
