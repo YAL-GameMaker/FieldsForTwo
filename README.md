@@ -3,8 +3,9 @@ There is this sort of a two-player game where each player does their own thing
 and they occasionally influence each other - like
 Tetris, Puyo Puyo, or even Shovel Knight Pocket Dungeon.
 
-This is an example for doing such a thing (in GameMaker).
-![](screenshot.png)
+This is an example for doing such a thing (in GameMaker).  
+![](screenshot.png)  
+(also see [video](video.mp4))
 
 ## Theory
 Each player (game) field runs its own deterministic simulation.
@@ -20,13 +21,13 @@ and they apply it as an "attacked" turn.
 This ensures the "attack" applies after the same turn on both sides.
 
 As for networking itself,
-the example includes a simple "network adapter" system with TCP and Steamworks implementations.
+the example includes a simple two-player "network adapter" system with TCP and Steamworks implementations.
 
 ## The "game"
 This time I decided to _not_ make an off-spec Tetris clone,
 so you get a pseudo-game that features each of the key elements:
 
-- Variously-sized blocks spawn on the top of the screen and fall down, stacking together.
+- Variously-sized blocks spawn on the top of the screen and fall down, stacking up.
 - You lose if the blocks pile up all the way to the top of the screen.
 - You can click on the blocks to destroy them.  
   Falling blocks are worth 2 points, stale blocks are worth 1.
@@ -37,16 +38,14 @@ so you get a pseudo-game that features each of the key elements:
 Rest assured, for a "real" game you'll want to replace this with your own rules.
 
 ## Setting up
-
 - Open the GameMaker project  
   (as of writing, I have used LTS IDE v2022.0.2.51 and runtime v2022.0.2.49)
 - Open Extensions ➜ Steamworks and change Steamworks SDK path to your own  
   (with the extension version used, that should be Steamworks SDK 1.55)
 - Run two copies of the game and have a look!  
-  To test Steam, you'll need to open the second copy on another computer or in Sandboxie - Steam won't let you connect to yourself.
+  To test Steam, you'll need to open the second copy on another computer or in Sandboxie with another account - Steam won't let you connect to yourself.
 
 ## Credits
+Example by YellowAfterlife.
 
-Example by YellowAfterlife
-
-Originally done as a research project for **Bing Bang Studio**, released with permission.
+Originally made as a research project for **Bing Bang Studio**, released with permission.

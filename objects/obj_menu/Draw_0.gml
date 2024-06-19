@@ -54,14 +54,9 @@ else if (modal == "join_ip") {
 else {
 	var _steam = net_adapter.kind == "Steam";
 	var _can_steam = steam_initialised();
-	s = ("Menu:"
-		+ "\n[1] Host"
-		+ "\n[2] " + (_steam ? "Show overlay" : "Join")
-		+ "\n[3] " + (_can_steam
-			? "Change adapter (currently: " + net_adapter.kind + ")"
-			: "(steam is unavailable)"
-		)
-	);
+	s = "Menu:";
+	
+	s += "\n[1] Host";
 	if (keyboard_check_pressed(ord("1"))) {
 		if (_steam) {
 			net_adapter.host({
@@ -71,14 +66,23 @@ else {
 			modal = "host_port";
 			keyboard_string = string(host_port);
 		}
-	} else if (keyboard_check_pressed(ord("2"))) {
+	}
+	
+	s += "\n[2] " + (_steam ? "Show overlay" : "Join");
+	if (keyboard_check_pressed(ord("2"))) {
 		if (_steam) {
 			steam_activate_overlay(ov_friends);
 		} else {
 			modal = "join_ip";
 			keyboard_string = join_ip;
 		}
-	} else if (keyboard_check_pressed(ord("3")) && _can_steam) {
+	}
+	
+	s += "\n[3] " + (_can_steam
+		? "Change adapter (currently: " + net_adapter.kind + ")"
+		: "(Steam is unavailable!)"
+	);
+	if (keyboard_check_pressed(ord("3")) && _can_steam) {
 		var _adapter;
 		if (_steam) {
 			_adapter = new TcpAdapter();
@@ -86,7 +90,6 @@ else {
 			_adapter = new SteamAdapter();
 		}
 		with (obj_net_control) change_adapter(_adapter);
-		add_adapter_callbacks();
 	}
 }
 draw_set_font(fnt_test);

@@ -1,5 +1,4 @@
 /// Parses string to a numeric port or returns error text
-/// @returns {string|number}
 function scr_validate_port(_port_str) {
 	if (string_digits(_port_str) != _port_str) {
 		return "Port should only contain numbers";

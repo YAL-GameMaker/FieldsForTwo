@@ -5,6 +5,11 @@
 **/
 function SteamAdapter() : NetworkAdapter() constructor {
 	kind = "Steam";
+	/**
+		This is whomever that we'll be talking to.
+		For the server, this is the connected client.
+		For the client, this is the server (lobby owner).
+	**/
 	remote = 0;
 	buffer = buffer_create(1024, buffer_grow, 1);
 	steam_net_packet_set_type(steam_net_packet_type_reliable);
@@ -66,8 +71,10 @@ function SteamAdapter() : NetworkAdapter() constructor {
 				//buffer_set_used_size(buffer, _size);
 			}
 			steam_net_packet_get_data(buffer);
-			buffer_seek(buffer, buffer_seek_start, 0);
 			//trace("recv", buffer_prettyprint(buffer, _size));
+			
+			// don't forget to rewind the buffer before reading!
+			buffer_seek(buffer, buffer_seek_start, 0);
 			handle_packet(buffer, _size);
 		}
 	}
@@ -98,13 +105,19 @@ function SteamAdapter() : NetworkAdapter() constructor {
 					if (_ok) {
 						remote = steam_lobby_get_owner_id();
 					}
-					handle_connect(e[?"success"]);
+					// special case: if you do matchmaking,
+					// it's possible for lobby owner to leave by the time you enter it
+					/*if (remote == steam_get_user_steam_id()) {
+						trace("There's no one else in this lobby!");
+						_ok = false;
+					}*/
+					handle_connect(_ok);
 				}
 				break;
-			case "lobby_join_requested":
-				join({
-					lobby_id: e[?"lobby_id"]
-				})
+			case "lobby_join_requested": // can accept invites in the menu
+				if (room == rm_menu) {
+					join({ lobby_id: e[?"lobby_id"] });
+				}
 				break;
 		}
 	}
