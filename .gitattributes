@@ -3,3 +3,4 @@
 *.html linguist-vendored
 *.yy linguist-vendored
 extensions/* linguist-vendored
+extensions/*.cpp linguist-vendored
