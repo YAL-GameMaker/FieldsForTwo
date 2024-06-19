@@ -1,0 +1,5 @@
+# This directory is a Syncthing folder marker.
+# Do not delete.
+
+folderID: 3x37x-vcok3
+created: 2024-06-18T15:18:03+03:00

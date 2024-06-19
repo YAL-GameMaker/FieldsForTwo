@@ -1,6 +1,18 @@
+/**
+	A perfectly normal TCP adapter.
+	Host configuration: (port: number)
+	Join configuration: (url: string, port: number)
+**/
 function TcpAdapter() : NetworkAdapter() constructor {
 	kind = "TCP";
+	/**
+		For server, this is our "listen" socket.
+		For client, this is the socket that we use to connect-communicate.
+	**/
 	socket = -1 /*#as network_socket*/;
+	/**
+		For server, this is the "client" socket that connects to us.
+	**/
 	client = -1 /*#as network_socket*/;
 	
 	static __NetworkAdapter_reset = reset;
@@ -17,9 +29,9 @@ function TcpAdapter() : NetworkAdapter() constructor {
 	}
 	
 	static __NetworkAdapter_host = host;
-	static host = function(_port) {
-		__NetworkAdapter_host(_port);
-		socket = network_create_server(network_socket_tcp, _port, 1);
+	static host = function(_config) {
+		__NetworkAdapter_host(_config);
+		socket = network_create_server(network_socket_tcp, _config.port, 1);
 		client = -1;
 		if (socket == -1) {
 			call_soon(function() {
@@ -55,15 +67,19 @@ function TcpAdapter() : NetworkAdapter() constructor {
 		switch (e[?"type"]) {
 			case network_type_non_blocking_connect:
 				if (e[?"id"] != socket) break;
+				// we are client and we connected to a server
 				handle_connect(e[?"succeeded"]);
 				break;
 			case network_type_connect:
 				if (e[?"id"] != socket) break;
+				// we are server and we got a connection
 				client = e[?"socket"];
 				handle_connect(true);
 				break;
 			case network_type_disconnect:
 				if (e[?"id"] != socket) break;
+				// "formal" disconnect (server-only)
+				// there is a separate timeout check in {obj_net_control}
 				handle_disconnect();
 				break;
 			case network_type_data:

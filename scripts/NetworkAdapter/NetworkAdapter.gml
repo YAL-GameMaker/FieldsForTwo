@@ -5,6 +5,7 @@ function NetworkAdapter() constructor {
 	is_connected = false;
 	is_connecting = false;
 	is_creating = false;
+	packets_received = 0;
 	
 	// callbacks:
 	on_host = function(_success) {};
@@ -13,6 +14,9 @@ function NetworkAdapter() constructor {
 	on_packet = function(_buf, _size) {};
 	
 	// Main API:
+	static destroy = function() {
+		reset();
+	}
 	static reset = function() {
 		ds_queue_clear(pause_queue);
 		is_active = false;
@@ -20,9 +24,10 @@ function NetworkAdapter() constructor {
 		is_connected = false;
 		is_connecting = false;
 		is_creating = false;
+		packets_received = 0;
 	};
 	static update = function() {};
-	static host = function(_port) {
+	static host = function(_config) {
 		if (is_active) reset();
 		is_active = true;
 		is_server = true;
@@ -84,6 +89,7 @@ function NetworkAdapter() constructor {
 		on_disconnect();
 	};
 	static handle_packet = function(_buf, _size) {
+		packets_received += 1;
 		if (is_paused) {
 			var _copy = buffer_create(_size, buffer_fixed, 1);
 			buffer_copy(_buf, 0, _size, _copy, 0);
@@ -93,7 +99,7 @@ function NetworkAdapter() constructor {
 		on_packet(_buf, _size);
 	};
 	
-	//
+	// async events:
 	static async_network = function() {};
 	static async_steam = function() {};
 }

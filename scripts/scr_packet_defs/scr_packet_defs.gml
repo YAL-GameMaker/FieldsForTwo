@@ -13,4 +13,7 @@ enum PacketType {
 	
 	/// [sc][Game] [json:string]
 	Turn,
+	
+	/// [s][Game]
+	BackToLobby,
 }

@@ -8,16 +8,30 @@ function scr_handle_turn(_input) {
 			seed = _input.seed;
 			break;
 		case "timer":
-			var _found = false;
+			// a little extra legwork because the bottom blocks should process first,
+			// else a block above can move into a block that's about to solidify
+			var _queue = global.__scr_handle_turn__queue;
+			ds_priority_clear(_queue);
 			with (obj_falling_block) if (field == _field_id) {
-				_found = true;
+				ds_priority_add(_queue, id,
+					(y - field.y) * 1000 + (x - field.x)
+				);
+			}
+			
+			var _count = ds_priority_size(_queue);
+			if (_count == 0) {
+				// no falling blocks - make one
+				spawn_block();
+			} else repeat (_count) with (ds_priority_delete_max(_queue)) {
 				var _ny = y + 32;
+				// we can keep falling until we hit another block or field boundary
 				if (!place_meeting(x, _ny, obj_solid_block)
 					&& place_meeting(x, _ny, field)
 				) {
 					y = _ny;
 				} else {
 					if (y < other.y + 32) {
+						// piled up to the top!
 						other.state = FieldState.Defeat;
 						with (obj_field) if (id != _field_id) {
 							if (state == FieldState.Playing) {
@@ -27,9 +41,6 @@ function scr_handle_turn(_input) {
 					}
 					solidify();
 				}
-			}
-			if (!_found) {
-				spawn_block();
 			}
 			break;
 		case "click":
@@ -52,10 +63,19 @@ function scr_handle_turn(_input) {
 				instance_destroy(_block);
 				
 				// and make other blocks fall if there's nothing below them now
-				if (!_falling) with (obj_solid_block) if (field == _field_id
-					&& !place_meeting(x, y + 1, obj_solid_block)
-					&& place_meeting(x, y + 32, obj_field)
-				) desolidify();
+				if (!_falling) repeat (16) {
+					// we can do this several times if you are removing a block
+					// from the bottom of a big tower
+					var _new = false;
+					with (obj_solid_block) if (field == _field_id
+						&& !place_meeting(x, y + 1, obj_solid_block)
+						&& place_meeting(x, y + 32, obj_field)
+					) {
+						_new = true;
+						desolidify();
+					}
+					if (!_new) break;
+				}
 			}
 			break;
 		case "attack":
@@ -81,3 +101,4 @@ function scr_handle_turn(_input) {
 			break;
 	}
 }
+global.__scr_handle_turn__queue = ds_priority_create();
