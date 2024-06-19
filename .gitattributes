@@ -2,4 +2,4 @@
 *.h linguist-language=C++
 *.html linguist-vendored
 *.yy linguist-vendored
-*/extensions/* linguist-vendored
+extensions/* linguist-vendored
